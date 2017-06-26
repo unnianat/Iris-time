@@ -5,10 +5,12 @@ const service = express();
 const request = require('superagent');
 const moment = require('moment');
 
+require('dotenv').config({path: '../.env'});
 
 service.get('/service/:location', (req, res, next) => {
-
-    request.get('https://maps.googleapis.com/maps/api/geocode/json?address=' + req.params.location + '&key=AIzaSyDAfddstuH1sEoYG9DDZfk9npJhdaeaO3Q', (err, response) => {
+    console.log(process.env.SERVICE_ADDRESS_URL);
+    console.log("Test");
+    request.get(process.env.SERVICE_ADDRESS_URL + '=' + req.params.location + '&key=' +  process.env.SERVICE_ADDRESS_KEY, (err, response) => {
         if(err) {
             console.log(err);
             return res.sendStatus(500);
@@ -17,7 +19,7 @@ service.get('/service/:location', (req, res, next) => {
         const location = response.body.results[0].geometry.location;
         const timestamp = +moment().format('X');
 
-        request.get('https://maps.googleapis.com/maps/api/timezone/json?location=' + location.lat + ',' + location.lng + '&timestamp=' + timestamp + '&key=AIzaSyAXUTmjEAZqVITGYea1AAaAY2QhAu1Lmow', (err, response) => {
+        request.get(process.env.SERVICE_LOCATION_URL + '=' + location.lat + ',' + location.lng + '&timestamp=' + timestamp + '&key=' + process.env.SERVICE_LOCATION_KEY, (err, response) => {
             if(err) {
                 console.log(err);
                 return res.sendStatus(500);
